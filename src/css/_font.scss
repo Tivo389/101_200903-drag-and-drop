@@ -1,0 +1,79 @@
+html {
+  --bodyFontFamily: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --headerFontFamily: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --bodyFontSize: 1.8rem;                                   // BODY COPY
+  --h1FontSize: calc(var(--h2FontSize) * var(--jumpRatio)); // PAGE BANNER
+  --h2FontSize: calc(var(--h3FontSize) * var(--jumpRatio)); // PAGE MAIN HEADER
+  --h3FontSize: calc(var(--h4FontSize) * var(--jumpRatio)); // PAGE SUB HEADER
+  --h4FontSize: calc(var(--h5FontSize) * var(--jumpRatio)); // ARTICLE MAIN HEADER
+  --h5FontSize: calc(var(--h6FontSize) * var(--jumpRatio)); // ARTICLE SUB HEADER
+  --h6FontSize: var(--bodyFontSize);                        // ARTICLE SECTION
+  --jumpRatio: 1.15;
+}
+a, h1, h2, h3, h4, h5, h6, p {
+  color: var(--colorBlack);
+  line-height: 115%;
+  margin: 0;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--headerFontFamily);
+  font-weight: bolder;
+}
+a, p {
+  font-family: var(--bodyFontFamily);
+}
+p + p {
+  margin: 0.75em 0 0 0;
+}
+a {
+  font-size: inherit;
+  &:visited, &:focus, &:active {
+    color: var(--colorBlack);
+    outline: none;
+    text-decoration: none;
+  }
+}
+p {
+  font-size: var(--bodyFontSize);
+}
+h1 {
+  font-size: var(--h1FontSize);
+}
+h2 {
+  font-size: var(--h2FontSize);
+}
+h3 {
+  font-size: var(--h3FontSize);
+}
+h4 {
+  font-size: var(--h4FontSize);
+}
+h5 {
+  font-size: var(--h5FontSize);
+}
+h6 {
+  font-size: var(--h6FontSize);
+}
+
+
+
+@include w640 {
+  html {
+    --bodyFontSize: 2.0rem;
+    --jumpRatio: 1.25;
+  }
+  a, h1, h2, h3, h4, h5, h6, p {
+    line-height: 125%;
+  }
+}
+
+
+
+@include w1280 {
+  html {
+    --jumpRatio: 1.35;
+  }
+  a, h1, h2, h3, h4, h5, h6, p {
+    line-height: 135%;
+  }
+}

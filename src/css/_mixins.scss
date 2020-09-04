@@ -1,0 +1,27 @@
+@mixin w480 {
+  @media only screen and (min-width: 480px) {
+    @content;
+  }
+}
+@mixin w640 {
+  @media only screen and (min-width: 640px) {
+    @content;
+  }
+}
+@mixin w1280 {
+  @media only screen and (min-width: 1280px) {
+    @content;
+  }
+}
+@mixin w1920 {
+  @media only screen and (min-width: 1920px) {
+    @content;
+  }
+}
+@mixin hover {
+  @media (any-hover: hover) {
+    &:hover {
+      @content;
+    }
+  }
+}

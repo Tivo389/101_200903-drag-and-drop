@@ -1,0 +1,12 @@
+html {
+  box-sizing: border-box;
+  font-size: 10px; // 1.6rem  = 16px / Note vendor min. may be higher
+}
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+*, *::before, *::after {
+  box-sizing: inherit;
+}

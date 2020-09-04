@@ -1,0 +1,50 @@
+.debug {
+  border: 1px dashed #FF0000 !important;
+}
+.debugAll {
+  all: unset !important;
+  border: 1px dashed #00C8FF !important;
+}
+.debugGrid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: row;
+  & .gridItem {
+    border-right: 1px dashed rgba(0,0,0,0.2);
+    display: none;
+    flex: 1 0 auto;
+    &:nth-child(-n+4) {
+      display: flex;
+    }
+    &:nth-child(2) {
+      border-right: 1px dashed rgba(0,0,0,0.6);
+    }
+    &:nth-child(4) {
+      border-right: none;
+    }
+  }
+}
+.hidden {
+  display: none !important;
+}
+
+
+
+@include w640 {
+  .debugGrid .gridItem {
+    display: flex;
+    &:nth-child(2) {
+      border-right: 1px dashed rgba(0,0,0,0.2);
+    }
+    &:nth-child(4), &:nth-child(8) {
+      border-right: 1px dashed rgba(0,0,0,0.6);
+    }
+    &:nth-child(12) {
+      border-right: none;
+    }
+  }
+}
