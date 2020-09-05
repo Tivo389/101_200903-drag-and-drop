@@ -7,11 +7,88 @@
 @import '_font';
 
 .mainContainer {
-  border: 16px solid goldenrod;
   display: flex;
   flex-direction: column;
   height: 100vh;
   justify-content: center;
+  align-items: center;
   text-align: center;
   width: 100vw;
+}
+.dragDropContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: calc(100% - 32px);
+  height: calc(100% - 32px);
+}
+.dragDropContainer .landingPad {
+  width: 100%;
+  padding-bottom: 100%;
+  border-radius: 8px;
+  background: rgb(200,200,200);
+}
+.dragDropContainer .dropItemContainer {
+  border-top: 1px dashed rgb(100,100,100);
+  width: 100%;
+  margin: 32px 0;
+  display: flex;
+  flex-direction: row;
+  padding: 32px 0 0 0;
+  justify-content: space-between;
+}
+.dragDropContainer .dropItem {
+  border-radius: 999px;
+  height: 88px;
+  position: relative;
+  width: 88px;
+  will-change: transform;
+  transition: $durationXS ease-in-out;
+  &::after, &::before {
+    border-radius: 999px;
+    bottom: 0;
+    content: '';
+    height: 100%;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: $durationXS ease-in-out;
+    width: 100%;
+  }
+  &::after {
+    box-shadow: $boxShadowHover;
+    opacity: 0;
+  }
+  &::before {
+    box-shadow: $boxShadowDefault;
+  }
+  &.cyan {
+    background: rgb(118, 236, 236);
+  }
+  &.magenta {
+    background: rgb(236, 118, 236);
+  }
+  &.pseudoHover {
+    transform: translateY(-8px);
+    &::before {
+      opacity: 0;
+    }
+    &::after {
+      opacity: 1;
+    }
+  }
+  &.yellow {
+    background: rgb(236, 236, 118);
+  }
+  @include hover {
+    transform: translateY(-8px);
+    &::before {
+      opacity: 0;
+    }
+    &::after {
+      opacity: 1;
+    }
+  }
 }
