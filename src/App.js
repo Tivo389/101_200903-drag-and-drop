@@ -5,7 +5,7 @@ import DropItem from './components/DropItem';
 
 function App() {
   return (
-    <main className="mainContainer">
+    <main className="mainContainer" style={{height: window.innerHeight}}>
       {/* <DebugGrid></DebugGrid> */}
       <div className="dragDropContainer">
         <div className="landingPad"></div>
