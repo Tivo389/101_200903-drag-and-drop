@@ -3,7 +3,7 @@ import { throttle } from './Helper';
 
 class DropItem extends Component {
   // COMPONENT VARIABLES
-  axis = {xStart:0, yStart:0, xMove:0, yMove:0, xEnd: 0, yEnd:0};
+  axis = {xStart:0, yStart:0, xMove:0, yMove:0, xEnd:0, yEnd:0};
   className = `dropItem ${this.props.color}`;
   mouseDown = false;
 
@@ -97,7 +97,7 @@ class DropItem extends Component {
   getAxis = (e,phase) => {
     let xPhase = `x${phase}`;
     let yPhase = `y${phase}`;
-    if (phase === 'Start' || phase === 'Move') {
+    if (phase === 'Start' || (phase === 'Move' && this.axis.xEnd === 0)) {
       if (e.touches && e.touches.length > 1) {
         return;
       } else if (window.PointerEvent) {
@@ -111,6 +111,22 @@ class DropItem extends Component {
       } else {
         this.axis[xPhase] = Math.round(e.clientX);
         this.axis[yPhase] = Math.round(e.clientY);
+      }
+      this.reviewAxisThreshold(xPhase, yPhase);
+    } else if (phase === 'Move' && this.axis.xEnd !== 0) {
+      if (e.touches && e.touches.length > 1) {
+        return;
+      } else if (window.PointerEvent) {
+        if (e.targetTouches) {
+          this.axis[xPhase] = this.axis.xEnd + Math.round(e.targetTouches[0].clientX);
+          this.axis[yPhase] = this.axis.yEnd + Math.round(e.targetTouches[0].clientY);
+        } else {
+          this.axis[xPhase] = this.axis.xEnd + Math.round(e.targetTouches[0].clientX);
+          this.axis[yPhase] = this.axis.yEnd + Math.round(e.targetTouches[0].clientY);
+        }
+      } else {
+        this.axis[xPhase] = this.axis.xEnd + Math.round(e.clientX);
+        this.axis[yPhase] = this.axis.yEnd + Math.round(e.clientY);
       }
       this.reviewAxisThreshold(xPhase, yPhase);
     } else if (phase === 'End') {
@@ -135,23 +151,10 @@ class DropItem extends Component {
   };
   // - Apply the XY axis values to the e.currentTarget
   applyAxis = (e) => {
-    let phase;
-    (this.axis.xEnd === 0) ? phase = 'initial' : phase = 'update';
-    if (phase === 'initial') {
-      const xAxisMovement = this.axis.xMove - this.axis.xStart;
-      const yAxisMovement = this.axis.yMove - this.axis.yStart;
-      const styleValue = `transform: translate(${xAxisMovement}px, ${yAxisMovement}px);`
-      e.currentTarget.style = styleValue;
-    } else if (phase === 'update') {
-      console.log(`this.axis.xEnd: ${this.axis.xEnd}`);
-      console.log(`this.axis.yEnd: ${this.axis.yEnd}`);
-      console.log(`this.axis.xMove: ${this.axis.xMove}`);
-      console.log(`this.axis.yMove: ${this.axis.yMove}`);
-      // const xAxisMovement = this.axis.xMove - this.axis.xEnd;
-      // const yAxisMovement = this.axis.yMove - this.axis.yEnd;
-      // const styleValue = `transform: translate(${xAxisMovement}px, ${yAxisMovement}px);`
-      // e.currentTarget.style = styleValue;
-    }
+    const xAxisMovement = this.axis.xMove - this.axis.xStart;
+    const yAxisMovement = this.axis.yMove - this.axis.yStart;
+    const styleValue = `transform: translate(${xAxisMovement}px, ${yAxisMovement}px);`
+    e.currentTarget.style = styleValue;
   };
 }
 
