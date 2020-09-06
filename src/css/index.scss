@@ -27,7 +27,26 @@
   width: 100%;
   padding-bottom: 100%;
   border-radius: 8px;
-  background: rgb(200,200,200);
+  position: relative;
+  overflow: hidden;
+  background: rgb(224,224,224);
+  &::before {
+    border: 4px dashed rgb(100,100,100);
+    border-radius: 8px;
+    bottom: 0;
+    content: '';
+    height: 100%;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: $durationXS ease-in-out;
+    width: 100%;
+  }
+  &.active::before {
+    opacity: 1;
+  }
 }
 .dragDropContainer .dropItemContainer {
   border-top: 1px dashed rgb(100,100,100);
@@ -68,10 +87,16 @@
     margin-left: 16px;
   }
   &.cyan {
-    background: rgb(118, 236, 236);
+    background: rgb(118,236,236);
+    &.inactive {
+      background: rgb(200,255,255);
+    }
   }
   &.magenta {
-    background: rgb(236, 118, 236);
+    background: rgb(236,118,236);
+    &.inactive {
+      background: rgb(255,200,255);
+    }
   }
   &.noTransition {
     transition: none;
@@ -86,7 +111,10 @@
     }
   }
   &.yellow {
-    background: rgb(236, 236, 118);
+    background: rgb(245, 212, 106);
+    &.inactive {
+      background: rgb(255, 236, 174);
+    }
   }
   @include hover {
     transform: translateY(-8px);

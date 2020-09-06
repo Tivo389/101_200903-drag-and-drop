@@ -38,6 +38,7 @@ class DropItem extends Component {
   // HANDLER FUNCTION
   handleStart = (e) => {
     e.currentTarget.classList.add('pseudoHover');
+    this.updateNonTargets(e, 'Start');
     this.getAxis(e,'Start');
   };
   handleMove = (e) => {
@@ -50,6 +51,7 @@ class DropItem extends Component {
     e.currentTarget.classList.remove('pseudoHover');
     document.body.classList.remove('bodyScrollLock');
     e.currentTarget.classList.remove('noTransition');
+    this.updateNonTargets(e, 'End');
     this.getAxis(e, 'End');
   };
 
@@ -93,6 +95,13 @@ class DropItem extends Component {
 
 
   // COMPONENT FUNCTIONS
+  // - Apply the XY axis values to the e.currentTarget
+  applyAxis = (e) => {
+    const xAxisMovement = this.axis.xMove - this.axis.xStart;
+    const yAxisMovement = this.axis.yMove - this.axis.yStart;
+    const styleValue = `transform: translate(${xAxisMovement}px, ${yAxisMovement}px);`
+    e.currentTarget.style = styleValue;
+  };
   // - Get the XY axis values based on the requested Phase
   getAxis = (e,phase) => {
     let eClientX;
@@ -148,12 +157,21 @@ class DropItem extends Component {
       yAxis = window.innerHeight;
     }
   };
-  // - Apply the XY axis values to the e.currentTarget
-  applyAxis = (e) => {
-    const xAxisMovement = this.axis.xMove - this.axis.xStart;
-    const yAxisMovement = this.axis.yMove - this.axis.yStart;
-    const styleValue = `transform: translate(${xAxisMovement}px, ${yAxisMovement}px);`
-    e.currentTarget.style = styleValue;
+  // - Once a target item is selected update the make the non targets appear deactivated
+  updateNonTargets = (e, phase) => {
+    const allItems = document.querySelector('.dropItemContainer').querySelectorAll('.dropItem');
+    const landingPad = document.querySelector('.landingPad');
+    if (phase === 'Start') {
+      allItems.forEach(item => {
+        if (item !== e.currentTarget) item.classList.add('inactive');
+      });
+      landingPad.classList.add('active');
+    } else if (phase === 'End') {
+      allItems.forEach(item => {
+        if (item !== e.currentTarget) item.classList.remove('inactive');
+      });
+      landingPad.classList.remove('active');
+    }
   };
 }
 
