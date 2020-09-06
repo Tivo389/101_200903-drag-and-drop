@@ -416,6 +416,9 @@ h6 {
   a, h1, h2, h3, h4, h5, h6, p {
     line-height: 135%; } }
 
+.bodyScrollLock {
+  overflow: hidden !important; }
+
 .mainContainer {
   display: flex;
   flex-direction: column;
@@ -426,12 +429,9 @@ h6 {
   width: 100vw; }
 
 .dragDropContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: calc(100% - 32px);
-  height: calc(100% - 32px); }
+  width: calc(100% - 64px);
+  height: calc(100% - 64px);
+  flex: 0; }
 
 .dragDropContainer .landingPad {
   width: 100%;
@@ -442,17 +442,17 @@ h6 {
 .dragDropContainer .dropItemContainer {
   border-top: 1px dashed #646464;
   width: 100%;
-  margin: 32px 0;
+  margin: 32px 0 0 0;
   display: flex;
   flex-direction: row;
   padding: 32px 0 0 0;
-  justify-content: space-between; }
+  justify-content: center; }
 
 .dragDropContainer .dropItem {
   border-radius: 999px;
-  height: 88px;
+  height: 66px;
   position: relative;
-  width: 88px;
+  width: 66px;
   will-change: transform;
   transition: 0.15s ease-in-out; }
   .dragDropContainer .dropItem::after, .dragDropContainer .dropItem::before {
@@ -471,10 +471,14 @@ h6 {
     opacity: 0; }
   .dragDropContainer .dropItem::before {
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.24); }
+  .dragDropContainer .dropItem + .dropItem {
+    margin-left: 16px; }
   .dragDropContainer .dropItem.cyan {
     background: #76ecec; }
   .dragDropContainer .dropItem.magenta {
     background: #ec76ec; }
+  .dragDropContainer .dropItem.noTransition {
+    transition: none; }
   .dragDropContainer .dropItem.pseudoHover {
     transform: translateY(-8px); }
     .dragDropContainer .dropItem.pseudoHover::before {
