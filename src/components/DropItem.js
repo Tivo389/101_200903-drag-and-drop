@@ -95,38 +95,37 @@ class DropItem extends Component {
   // COMPONENT FUNCTIONS
   // - Get the XY axis values based on the requested Phase
   getAxis = (e,phase) => {
+    let eClientX;
+    let eClientY;
+    let eTargetTouchesClientX;
+    let eTargetTouchesClientY;
     let xPhase = `x${phase}`;
     let yPhase = `y${phase}`;
     if (phase === 'Start' || (phase === 'Move' && this.axis.xEnd === 0)) {
-      if (e.touches && e.touches.length > 1) {
-        return;
-      } else if (window.PointerEvent) {
-        if (e.targetTouches) {
-          this.axis[xPhase] = Math.round(e.targetTouches[0].clientX);
-          this.axis[yPhase] = Math.round(e.targetTouches[0].clientY);
-        } else {
-          this.axis[xPhase] = Math.round(e.targetTouches[0].clientX);
-          this.axis[yPhase] = Math.round(e.targetTouches[0].clientY);
-        }
-      } else {
-        this.axis[xPhase] = Math.round(e.clientX);
-        this.axis[yPhase] = Math.round(e.clientY);
-      }
-      this.reviewAxisThreshold(xPhase, yPhase);
+      eTargetTouchesClientX = Math.round(e.targetTouches[0].clientX);
+      eTargetTouchesClientY = Math.round(e.targetTouches[0].clientY);
+      eClientX = Math.round(e.clientX);
+      eClientY = Math.round(e.clientY);
     } else if (phase === 'Move' && this.axis.xEnd !== 0) {
+      eTargetTouchesClientX = this.axis.xEnd + Math.round(e.targetTouches[0].clientX);
+      eTargetTouchesClientY = this.axis.yEnd + Math.round(e.targetTouches[0].clientY);
+      eClientX = this.axis.xEnd + Math.round(e.clientX);
+      eClientY = this.axis.yEnd + Math.round(e.clientY);
+    }
+    if (phase === 'Start' || phase === 'Move') {
       if (e.touches && e.touches.length > 1) {
         return;
       } else if (window.PointerEvent) {
         if (e.targetTouches) {
-          this.axis[xPhase] = this.axis.xEnd + Math.round(e.targetTouches[0].clientX);
-          this.axis[yPhase] = this.axis.yEnd + Math.round(e.targetTouches[0].clientY);
+          this.axis[xPhase] = eTargetTouchesClientX;
+          this.axis[yPhase] = eTargetTouchesClientY;
         } else {
-          this.axis[xPhase] = this.axis.xEnd + Math.round(e.targetTouches[0].clientX);
-          this.axis[yPhase] = this.axis.yEnd + Math.round(e.targetTouches[0].clientY);
+          this.axis[xPhase] = eClientX;
+          this.axis[yPhase] = eClientY;
         }
       } else {
-        this.axis[xPhase] = this.axis.xEnd + Math.round(e.clientX);
-        this.axis[yPhase] = this.axis.yEnd + Math.round(e.clientY);
+        this.axis[xPhase] = eClientX;
+        this.axis[yPhase] = eClientY;
       }
       this.reviewAxisThreshold(xPhase, yPhase);
     } else if (phase === 'End') {
