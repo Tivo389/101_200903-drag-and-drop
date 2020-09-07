@@ -39,12 +39,12 @@ class DropItem extends Component {
   // HANDLER FUNCTION
   handleStart = (e) => {
     e.currentTarget.classList.add('pseudoHover');
+    document.body.classList.add('bodyScrollLock');
+    e.currentTarget.classList.add('noTransition');
     this.updateOtherDropItems(e, 'Start');
     this.getAxis(e,'Start');
   };
   handleMove = (e) => {
-    document.body.classList.add('bodyScrollLock');
-    e.currentTarget.classList.add('noTransition');
     this.getAxis(e, 'Move');
     this.checkLandingZone(e);
     this.updateOtherDropItems(e, 'Move');
@@ -110,8 +110,8 @@ class DropItem extends Component {
   checkLandingZone = (e) => {
     const lz = this.props.landingZoneArea;
     const dropItemBoundary = e.currentTarget.getBoundingClientRect();
-    const dropItemCenterX = dropItemBoundary.x + (dropItemBoundary.width / 2);
-    const dropItemCenterY = dropItemBoundary.y + (dropItemBoundary.height / 2);
+    const dropItemCenterX = dropItemBoundary.x + dropItemBoundary.width / 2;
+    const dropItemCenterY = dropItemBoundary.y + dropItemBoundary.height / 2;
     const withinLandingZoneX = dropItemCenterX >= lz.xOrigin && dropItemCenterX <= lz.xEnd;
     const withinLandingZoneY = dropItemCenterY >= lz.yOrigin && dropItemCenterY <= lz.yEnd;
     const withinLandingZone = withinLandingZoneX && withinLandingZoneY;

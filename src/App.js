@@ -5,7 +5,7 @@ import DragDropBasic from './components/DragDropBasic';
 
 function App() {
   return (
-    <main className="mainContainer" style={{height: window.innerHeight}}>
+    <main className="mainContainer">
       {/* <DebugGrid></DebugGrid> */}
       <DragDropBasic></DragDropBasic>
     </main>

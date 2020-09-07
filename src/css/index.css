@@ -420,9 +420,10 @@ h6 {
     line-height: 135%; } }
 
 .dragDropContainer {
-  width: calc(100% - 64px);
+  flex: 0;
   height: calc(100% - 64px);
-  flex: 0; }
+  max-width: 320px;
+  width: calc(100% - 64px); }
 
 .dragDropContainer .landingZone {
   width: 100%;
