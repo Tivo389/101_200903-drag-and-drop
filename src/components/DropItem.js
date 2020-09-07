@@ -48,14 +48,14 @@ class DropItem extends Component {
     e.currentTarget.classList.add('pseudoHover');
     e.currentTarget.classList.add('noTransition');
     document.body.classList.add('bodyScrollLock');
-    this.getAxis(e,'Start');
     this.updateOtherDropItems(e, 'Start');
+    this.getAxis(e,'Start');
   };
   handleMove = (e) => {
     this.getAxis(e, 'Move');
-    this.checkLandingZone(e, this.dropItemTarget);
+    this.checkLandingZone(e);
     this.updateOtherDropItems(e, 'Move');
-    this.applyAxis(e, this.dropItemTarget);
+    this.applyAxis(e);
   };
   handleEnd = (e) => {
     if (this.dropItemTarget) {
@@ -66,9 +66,9 @@ class DropItem extends Component {
       e.currentTarget.classList.remove('noTransition');
     }
     document.body.classList.remove('bodyScrollLock');
-    this.getAxis(e, 'End', this.dropItemTarget);
-    this.checkLandingZone(e, this.dropItemTarget);
+    this.checkLandingZone(e);
     this.updateOtherDropItems(e, 'End');
+    this.getAxis(e, 'End');
   };
 
 
@@ -103,11 +103,11 @@ class DropItem extends Component {
     }
   };
   onMouseMove = (e) => {
-    this.handleMove(e)
+    throttle(this.handleMove(e), 8);
   };
   onMouseUp = (e) => {
     this.mouseDown = false;
-    this.handleEnd(e)
+    this.handleEnd(e);
     window.removeEventListener('mousemove', this.onMouseMove);
     window.removeEventListener('mouseup', this.onMouseUp);
   };
@@ -120,25 +120,24 @@ class DropItem extends Component {
 
   // COMPONENT FUNCTIONS
   // - Apply XY axis values to the current Drop Item
-  applyAxis = (e, dropItemTarget) => {
+  applyAxis = (e) => {
     const xAxisMovement = this.axis.xMove - this.axis.xStart;
     const yAxisMovement = this.axis.yMove - this.axis.yStart - 8; // -8px linked to .pseudoHover
     const styleValue = `transform: translate(${xAxisMovement}px, ${yAxisMovement}px);`
-    if (dropItemTarget) {
-      dropItemTarget.style = styleValue;
+    // // console.log(`styleValue: ${styleValue}`);
+    if (this.dropItemTarget) {
+      this.dropItemTarget.style = styleValue;
     } else {
       e.currentTarget.style = styleValue;
     }
   };
 
-
-
   // - Check if the Drop Item is above the Landing Zone and update the component property
-  checkLandingZone = (e, dropItemTarget) => {
+  checkLandingZone = (e) => {
     const lz = this.props.landingZoneArea;
     let dropItemBoundary;
-    if (dropItemTarget) {
-      dropItemBoundary = dropItemTarget.getBoundingClientRect();
+    if (this.dropItemTarget) {
+      dropItemBoundary = this.dropItemTarget.getBoundingClientRect();
     } else {
       dropItemBoundary = e.currentTarget.getBoundingClientRect();
     }
@@ -150,12 +149,15 @@ class DropItem extends Component {
     if (withinLandingZone) {
       this.withinLandingZone = true;
     } else {
-      e.currentTarget.style = "";
+      if (this.dropItemTarget) {
+        this.dropItemTarget.style = "";
+      } else {
+        e.currentTarget.style = "";
+      }
       this.withinLandingZone = false;
     }
+    // console.log(`this.withinLandingZone: ${this.withinLandingZone}`);
   };
-
-
 
   // - Get the XY axis values based on the requested Phase
   getAxis = (e,phase) => {
@@ -199,6 +201,11 @@ class DropItem extends Component {
         eClientY = this.axis.yEnd + Math.round(e.clientY);
       }
     }
+    // - Value Checker For Debugging
+    // console.log(`eClientX: ${eClientX}`);
+    // console.log(`eClientY: ${eClientY}`);
+    // console.log(`eTargetTouchesClientX: ${eTargetTouchesClientX}`);
+    // console.log(`eTargetTouchesClientY: ${eTargetTouchesClientY}`);
     // - If Statements to determine return value
     if (phase === 'Start' || phase === 'Move') {
       if (e.touches && e.touches.length > 1) {
@@ -215,7 +222,6 @@ class DropItem extends Component {
         this.axis[xPhase] = eClientX;
         this.axis[yPhase] = eClientY;
       }
-      this.reviewAxisThreshold(xPhase, yPhase);
     } else if (phase === 'End' && this.withinLandingZone === true) {
       let regexMatch;
       const regexPattern = /-?\d+/g;
@@ -231,24 +237,6 @@ class DropItem extends Component {
       this.axis[yPhase] = 0;
     }
   };
-
-
-
-  // - Review the XY axis to ensure they are with the viewport min and max
-  reviewAxisThreshold = (xPhase, yPhase) => {
-    if (this.axis[xPhase] <= 0) {
-      this.axis[xPhase] = 0;
-    } else if (this.axis[xPhase] >= window.innerWidth) {
-      this.axis[xPhase] = window.innerWidth;
-    }
-    if (this.axis[yPhase] <= 0) {
-      this.axis[yPhase] = 0;
-    } else if (this.axis[yPhase] >= window.innerHeight) {
-      this.axis[yPhase] = window.innerHeight;
-    }
-  };
-
-
 
   // - Once a Drop Item is selected, update the class of the unselected Items and Landing Zone
   updateOtherDropItems = (e, phase) => {
