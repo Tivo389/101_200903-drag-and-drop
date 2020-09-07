@@ -7,6 +7,9 @@ class DropItem extends Component {
   className = `dropItem ${this.props.color}`;
   withinLandingZone = false;
   mouseDown = false;
+  dropItemTarget;
+
+
 
 
 
@@ -19,14 +22,15 @@ class DropItem extends Component {
 
 
 
+
+
+
   // RENDER OF COMPONENT
   render() {
     return (
       <div
       className={this.className}
-      // onMouseDown={this.onMouseDown}
-      // onMouseMove={throttle(this.onMouseMove, 8)}
-      // onMouseUp={this.onMouseUp}
+      onMouseDown={this.onMouseDown}
       onTouchStart={this.onTouchStart}
       onTouchMove={throttle(this.onTouchMove, 8)}
       onTouchEnd={this.onTouchEnd}>
@@ -36,28 +40,39 @@ class DropItem extends Component {
 
 
 
+
+
+
   // HANDLER FUNCTION
   handleStart = (e) => {
     e.currentTarget.classList.add('pseudoHover');
-    document.body.classList.add('bodyScrollLock');
     e.currentTarget.classList.add('noTransition');
-    this.updateOtherDropItems(e, 'Start');
+    document.body.classList.add('bodyScrollLock');
     this.getAxis(e,'Start');
+    this.updateOtherDropItems(e, 'Start');
   };
   handleMove = (e) => {
     this.getAxis(e, 'Move');
-    this.checkLandingZone(e);
+    this.checkLandingZone(e, this.dropItemTarget);
     this.updateOtherDropItems(e, 'Move');
-    this.applyAxis(e);
+    this.applyAxis(e, this.dropItemTarget);
   };
   handleEnd = (e) => {
-    e.currentTarget.classList.remove('pseudoHover');
+    if (this.dropItemTarget) {
+      this.dropItemTarget.classList.remove('pseudoHover');
+      this.dropItemTarget.classList.remove('noTransition');
+    } else {
+      e.currentTarget.classList.remove('pseudoHover');
+      e.currentTarget.classList.remove('noTransition');
+    }
     document.body.classList.remove('bodyScrollLock');
-    e.currentTarget.classList.remove('noTransition');
+    this.getAxis(e, 'End', this.dropItemTarget);
+    this.checkLandingZone(e, this.dropItemTarget);
     this.updateOtherDropItems(e, 'End');
-    this.checkLandingZone(e);
-    this.getAxis(e, 'End');
   };
+
+
+
 
 
 
@@ -74,43 +89,59 @@ class DropItem extends Component {
 
 
 
+
+
+
   // MOUSE EVENT FUNCTIONS
-  // onMouseDown = (e) => {
-  //   this.mouseDown = true;
-  //   if (this.mouseDown) {
-  //     this.handleStart(e);
-  //     window.addEventListener('mousemove', (e) => {
-  //       this.onMouseMove(e)
-  //     });
-  //     // window.addEventListener('mouseup', this.onMouseUp(e));
-  //   }
-  // };
-  // onMouseMove = (e) => {
-  //   if (this.mouseDown) {
-  //     this.handleMove(e)
-  //   };
-  // };
-  // onMouseUp = (e) => {
-  //   this.mouseDown = false;
-  //   this.handleEnd(e);
-  //   // window.removeEventListener('mousemove', this.onMouseMove);
-  //   // window.removeEventListener('mouseup', this.onMouseUp);
-  // };
+  onMouseDown = (e) => {
+    this.mouseDown = true;
+    this.dropItemTarget = e.currentTarget;
+    if (this.mouseDown) {
+      this.handleStart(e);
+      window.addEventListener('mousemove', this.onMouseMove);
+      window.addEventListener('mouseup', this.onMouseUp);
+    }
+  };
+  onMouseMove = (e) => {
+    this.handleMove(e)
+  };
+  onMouseUp = (e) => {
+    this.mouseDown = false;
+    this.handleEnd(e)
+    window.removeEventListener('mousemove', this.onMouseMove);
+    window.removeEventListener('mouseup', this.onMouseUp);
+  };
+
+
+
+
 
 
 
   // COMPONENT FUNCTIONS
   // - Apply XY axis values to the current Drop Item
-  applyAxis = (e) => {
+  applyAxis = (e, dropItemTarget) => {
     const xAxisMovement = this.axis.xMove - this.axis.xStart;
     const yAxisMovement = this.axis.yMove - this.axis.yStart - 8; // -8px linked to .pseudoHover
     const styleValue = `transform: translate(${xAxisMovement}px, ${yAxisMovement}px);`
-    e.currentTarget.style = styleValue;
+    if (dropItemTarget) {
+      dropItemTarget.style = styleValue;
+    } else {
+      e.currentTarget.style = styleValue;
+    }
   };
+
+
+
   // - Check if the Drop Item is above the Landing Zone and update the component property
-  checkLandingZone = (e) => {
+  checkLandingZone = (e, dropItemTarget) => {
     const lz = this.props.landingZoneArea;
-    const dropItemBoundary = e.currentTarget.getBoundingClientRect();
+    let dropItemBoundary;
+    if (dropItemTarget) {
+      dropItemBoundary = dropItemTarget.getBoundingClientRect();
+    } else {
+      dropItemBoundary = e.currentTarget.getBoundingClientRect();
+    }
     const dropItemCenterX = dropItemBoundary.x + (dropItemBoundary.width / 2);
     const dropItemCenterY = dropItemBoundary.y + (dropItemBoundary.height / 2);
     const withinLandingZoneX = dropItemCenterX >= lz.xOrigin && dropItemCenterX <= lz.xEnd;
@@ -123,6 +154,9 @@ class DropItem extends Component {
       this.withinLandingZone = false;
     }
   };
+
+
+
   // - Get the XY axis values based on the requested Phase
   getAxis = (e,phase) => {
     let eClientX;
@@ -133,9 +167,6 @@ class DropItem extends Component {
     let yPhase = `y${phase}`;
     const initialMovement = this.axis.xEnd === 0;
     const subsequentMovement = this.axis.xEnd !== 0;
-
-
-
     // - Define variables
     if (phase === 'Start' || (phase === 'Move' && initialMovement)) {
       if (e.touches && e.touches.length > 1) {
@@ -168,9 +199,6 @@ class DropItem extends Component {
         eClientY = this.axis.yEnd + Math.round(e.clientY);
       }
     }
-
-
-
     // - If Statements to determine return value
     if (phase === 'Start' || phase === 'Move') {
       if (e.touches && e.touches.length > 1) {
@@ -189,18 +217,23 @@ class DropItem extends Component {
       }
       this.reviewAxisThreshold(xPhase, yPhase);
     } else if (phase === 'End' && this.withinLandingZone === true) {
+      let regexMatch;
       const regexPattern = /-?\d+/g;
-      const regexMatch = e.currentTarget.style.transform.match(regexPattern);
+      if (this.dropItemTarget) {
+        regexMatch = this.dropItemTarget.style.transform.match(regexPattern);
+      } else {
+        regexMatch = e.currentTarget.style.transform.match(regexPattern);
+      }
       this.axis[xPhase] = parseFloat(regexMatch[0]);
       this.axis[yPhase] = parseFloat(regexMatch[1]);
     } else if (phase === 'End' && this.withinLandingZone === false) {
       this.axis[xPhase] = 0;
       this.axis[yPhase] = 0;
     }
-
-
-
   };
+
+
+
   // - Review the XY axis to ensure they are with the viewport min and max
   reviewAxisThreshold = (xPhase, yPhase) => {
     if (this.axis[xPhase] <= 0) {
@@ -214,6 +247,9 @@ class DropItem extends Component {
       this.axis[yPhase] = window.innerHeight;
     }
   };
+
+
+
   // - Once a Drop Item is selected, update the class of the unselected Items and Landing Zone
   updateOtherDropItems = (e, phase) => {
     const allItems = document.querySelector('.dropItemContainer').querySelectorAll('.dropItem');
