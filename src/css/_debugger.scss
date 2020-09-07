@@ -13,15 +13,18 @@
   bottom: 0;
   display: flex;
   flex-direction: row;
+  z-index: 9999;
+  touch-action: none;
+  pointer-events: none;
   & .gridItem {
-    border-right: 1px dashed rgba(0,0,0,0.2);
+    border-right: 1px dashed rgba(255,0,0,0.8);
     display: none;
     flex: 1 0 auto;
     &:nth-child(-n+4) {
       display: flex;
     }
     &:nth-child(2) {
-      border-right: 1px dashed rgba(0,0,0,0.6);
+      border-right: 1px dashed rgba(255,0,0,0.8);
     }
     &:nth-child(4) {
       border-right: none;

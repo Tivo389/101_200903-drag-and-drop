@@ -1,0 +1,114 @@
+.dragDropContainer {
+  width: calc(100% - 64px);
+  height: calc(100% - 64px);
+  flex: 0;
+}
+.dragDropContainer .landingZone {
+  width: 100%;
+  padding-bottom: 100%;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  background: rgb(224,224,224);
+  &::after, &::before {
+    border-radius: 8px;
+    bottom: 0;
+    content: '';
+    height: 100%;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: $durationXS ease-in-out;
+    width: 100%;
+  }
+  &::after {
+    background: rgb(180,255,180);
+  }
+  &::before {
+    border: 4px dashed rgb(100,100,100);
+  }
+  &.withinLandingZone::after,
+  &.active::before {
+    opacity: 1;
+  }
+}
+.dragDropContainer .dropItemContainer {
+  border-top: 1px dashed rgb(100,100,100);
+  width: 100%;
+  margin: 32px 0 0 0;
+  display: flex;
+  flex-direction: row;
+  padding: 32px 0 0 0;
+  justify-content: center;
+}
+.dragDropContainer .dropItem {
+  border-radius: 999px;
+  height: 66px;
+  position: relative;
+  width: 66px;
+  will-change: transform;
+  transition: $durationXS ease-in-out;
+  &::after, &::before {
+    border-radius: 999px;
+    bottom: 0;
+    content: '';
+    height: 100%;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: $durationXS ease-in-out;
+    width: 100%;
+  }
+  &::after {
+    box-shadow: $boxShadowHover;
+    opacity: 0;
+  }
+  &::before {
+    box-shadow: $boxShadowDefault;
+  }
+  & + .dropItem {
+    margin-left: 16px;
+  }
+  &.cyan {
+    background: rgb(118,236,236);
+    &.inactive {
+      background: rgb(200,255,255);
+    }
+  }
+  &.magenta {
+    background: rgb(236,118,236);
+    &.inactive {
+      background: rgb(255,200,255);
+    }
+  }
+  &.noTransition {
+    transition: none;
+  }
+  &.pseudoHover {
+    transform: translateY(-8px);
+    &::before {
+      opacity: 0;
+    }
+    &::after {
+      opacity: 1;
+    }
+  }
+  &.yellow {
+    background: rgb(245, 212, 106);
+    &.inactive {
+      background: rgb(255, 236, 174);
+    }
+  }
+  @include hover {
+    transform: translateY(-8px);
+    &::before {
+      opacity: 0;
+    }
+    &::after {
+      opacity: 1;
+    }
+  }
+}
