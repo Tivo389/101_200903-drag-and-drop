@@ -12,6 +12,8 @@ class DragDropBasic extends Component {
   // LIFECYCLE METHODS
   componentDidMount() {
     this.getLandingZoneArea();
+    this.handleWindowHeight();
+    window.addEventListener('resize', this.handleWindowHeight);
   }
   componentDidUpdate() {}
   componentWillUnmount() {}
@@ -46,6 +48,9 @@ class DragDropBasic extends Component {
     this.setState({
       landingZoneArea: landingZoneArea
     });
+  };
+  handleWindowHeight = () => {
+    document.querySelector('.mainContainer').style = `height: ${window.innerHeight}px`;
   };
 }
 
