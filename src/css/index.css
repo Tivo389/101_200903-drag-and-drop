@@ -323,15 +323,18 @@ body {
   right: 0;
   bottom: 0;
   display: flex;
-  flex-direction: row; }
+  flex-direction: row;
+  z-index: 9999;
+  touch-action: none;
+  pointer-events: none; }
   .debugGrid .gridItem {
-    border-right: 1px dashed rgba(0, 0, 0, 0.2);
+    border-right: 1px dashed rgba(255, 0, 0, 0.8);
     display: none;
     flex: 1 0 auto; }
     .debugGrid .gridItem:nth-child(-n+4) {
       display: flex; }
     .debugGrid .gridItem:nth-child(2) {
-      border-right: 1px dashed rgba(0, 0, 0, 0.6); }
+      border-right: 1px dashed rgba(255, 0, 0, 0.8); }
     .debugGrid .gridItem:nth-child(4) {
       border-right: none; }
 
@@ -416,32 +419,19 @@ h6 {
   a, h1, h2, h3, h4, h5, h6, p {
     line-height: 135%; } }
 
-.bodyScrollLock {
-  overflow: hidden !important; }
-
-.mainContainer {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  width: 100vw; }
-
 .dragDropContainer {
   width: calc(100% - 64px);
   height: calc(100% - 64px);
   flex: 0; }
 
-.dragDropContainer .landingPad {
+.dragDropContainer .landingZone {
   width: 100%;
   padding-bottom: 100%;
   border-radius: 8px;
   position: relative;
   overflow: hidden;
   background: #e0e0e0; }
-  .dragDropContainer .landingPad::before {
-    border: 4px dashed #646464;
+  .dragDropContainer .landingZone::after, .dragDropContainer .landingZone::before {
     border-radius: 8px;
     bottom: 0;
     content: '';
@@ -453,7 +443,11 @@ h6 {
     top: 0;
     transition: 0.15s ease-in-out;
     width: 100%; }
-  .dragDropContainer .landingPad.active::before {
+  .dragDropContainer .landingZone::after {
+    background: #b4ffb4; }
+  .dragDropContainer .landingZone::before {
+    border: 4px dashed #646464; }
+  .dragDropContainer .landingZone.withinLandingZone::after, .dragDropContainer .landingZone.active::before {
     opacity: 1; }
 
 .dragDropContainer .dropItemContainer {
@@ -517,3 +511,15 @@ h6 {
         opacity: 0; }
       .dragDropContainer .dropItem:hover::after {
         opacity: 1; } }
+
+.bodyScrollLock {
+  overflow: hidden !important; }
+
+.mainContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100vw; }
