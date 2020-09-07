@@ -489,12 +489,16 @@ h6 {
     background: #76ecec; }
     .dragDropContainer .dropItem.cyan.inactive {
       background: #c8ffff; }
+    @media (any-hover: hover) {
+      .dragDropContainer .dropItem.cyan:hover {
+        background: #33e3e3; } }
   .dragDropContainer .dropItem.magenta {
     background: #ec76ec; }
     .dragDropContainer .dropItem.magenta.inactive {
       background: #ffc8ff; }
-  .dragDropContainer .dropItem.noTransition {
-    transition: none; }
+    @media (any-hover: hover) {
+      .dragDropContainer .dropItem.magenta:hover {
+        background: #e333e3; } }
   .dragDropContainer .dropItem.pseudoHover {
     transform: translateY(-8px); }
     .dragDropContainer .dropItem.pseudoHover::before {
@@ -505,13 +509,9 @@ h6 {
     background: #f5d46a; }
     .dragDropContainer .dropItem.yellow.inactive {
       background: #ffecae; }
-  @media (any-hover: hover) {
-    .dragDropContainer .dropItem:hover {
-      transform: translateY(-8px); }
-      .dragDropContainer .dropItem:hover::before {
-        opacity: 0; }
-      .dragDropContainer .dropItem:hover::after {
-        opacity: 1; } }
+    @media (any-hover: hover) {
+      .dragDropContainer .dropItem.yellow:hover {
+        background: #f0bf22; } }
 
 .bodyScrollLock {
   overflow: hidden !important; }
@@ -524,3 +524,6 @@ h6 {
   align-items: center;
   text-align: center;
   width: 100vw; }
+
+.noTransition {
+  transition: none !important; }

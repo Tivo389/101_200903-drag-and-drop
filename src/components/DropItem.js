@@ -25,7 +25,7 @@ class DropItem extends Component {
       <div
       className={this.className}
       // onMouseDown={this.onMouseDown}
-      // onMouseMove={throttle(this.onMouseMove, 0)}
+      // onMouseMove={throttle(this.onMouseMove, 8)}
       // onMouseUp={this.onMouseUp}
       onTouchStart={this.onTouchStart}
       onTouchMove={throttle(this.onTouchMove, 8)}
@@ -79,21 +79,22 @@ class DropItem extends Component {
   //   this.mouseDown = true;
   //   if (this.mouseDown) {
   //     this.handleStart(e);
-  //     window.addEventListener('mousemove', this.onMouseMove);
-  //     window.addEventListener('mouseup', this.onMouseUp);
+  //     window.addEventListener('mousemove', (e) => {
+  //       this.onMouseMove(e)
+  //     });
+  //     // window.addEventListener('mouseup', this.onMouseUp(e));
   //   }
   // };
   // onMouseMove = (e) => {
-  //   if (this.mouseDown) { this.handleMove(e); }
+  //   if (this.mouseDown) {
+  //     this.handleMove(e)
+  //   };
   // };
-  // onMouseUp = () => {
-  //   this.handleEnd();
+  // onMouseUp = (e) => {
   //   this.mouseDown = false;
-  //   window.removeEventListener('mousemove', this.onMouseMove);
-  //   window.removeEventListener('mouseup', this.onMouseUp);
-  // };
-  // onMouseLeave = (e) => {
-  //   if (this.mouseDown) { this.onMouseUp(); }
+  //   this.handleEnd(e);
+  //   // window.removeEventListener('mousemove', this.onMouseMove);
+  //   // window.removeEventListener('mouseup', this.onMouseUp);
   // };
 
 
@@ -110,8 +111,8 @@ class DropItem extends Component {
   checkLandingZone = (e) => {
     const lz = this.props.landingZoneArea;
     const dropItemBoundary = e.currentTarget.getBoundingClientRect();
-    const dropItemCenterX = dropItemBoundary.x + dropItemBoundary.width / 2;
-    const dropItemCenterY = dropItemBoundary.y + dropItemBoundary.height / 2;
+    const dropItemCenterX = dropItemBoundary.x + (dropItemBoundary.width / 2);
+    const dropItemCenterY = dropItemBoundary.y + (dropItemBoundary.height / 2);
     const withinLandingZoneX = dropItemCenterX >= lz.xOrigin && dropItemCenterX <= lz.xEnd;
     const withinLandingZoneY = dropItemCenterY >= lz.yOrigin && dropItemCenterY <= lz.yEnd;
     const withinLandingZone = withinLandingZoneX && withinLandingZoneY;
@@ -132,18 +133,44 @@ class DropItem extends Component {
     let yPhase = `y${phase}`;
     const initialMovement = this.axis.xEnd === 0;
     const subsequentMovement = this.axis.xEnd !== 0;
+
+
+
     // - Define variables
     if (phase === 'Start' || (phase === 'Move' && initialMovement)) {
-      eTargetTouchesClientX = Math.round(e.targetTouches[0].clientX);
-      eTargetTouchesClientY = Math.round(e.targetTouches[0].clientY);
-      eClientX = Math.round(e.clientX);
-      eClientY = Math.round(e.clientY);
+      if (e.touches && e.touches.length > 1) {
+        return;
+      } else if (window.PointerEvent) {
+        if (e.targetTouches) {
+          eTargetTouchesClientX = Math.round(e.targetTouches[0].clientX);
+          eTargetTouchesClientY = Math.round(e.targetTouches[0].clientY);
+        } else {
+          eClientX = Math.round(e.clientX);
+          eClientY = Math.round(e.clientY);
+        }
+      } else {
+        eClientX = Math.round(e.clientX);
+        eClientY = Math.round(e.clientY);
+      }
     } else if (phase === 'Move' && subsequentMovement) {
-      eTargetTouchesClientX = this.axis.xEnd + Math.round(e.targetTouches[0].clientX);
-      eTargetTouchesClientY = this.axis.yEnd + Math.round(e.targetTouches[0].clientY);
-      eClientX = this.axis.xEnd + Math.round(e.clientX);
-      eClientY = this.axis.yEnd + Math.round(e.clientY);
+      if (e.touches && e.touches.length > 1) {
+        return;
+      } else if (window.PointerEvent) {
+        if (e.targetTouches) {
+          eTargetTouchesClientX = this.axis.xEnd + Math.round(e.targetTouches[0].clientX);
+          eTargetTouchesClientY = this.axis.yEnd + Math.round(e.targetTouches[0].clientY);
+        } else {
+          eClientX = this.axis.xEnd + Math.round(e.clientX);
+          eClientY = this.axis.yEnd + Math.round(e.clientY);
+        }
+      } else {
+        eClientX = this.axis.xEnd + Math.round(e.clientX);
+        eClientY = this.axis.yEnd + Math.round(e.clientY);
+      }
     }
+
+
+
     // - If Statements to determine return value
     if (phase === 'Start' || phase === 'Move') {
       if (e.touches && e.touches.length > 1) {
@@ -170,18 +197,21 @@ class DropItem extends Component {
       this.axis[xPhase] = 0;
       this.axis[yPhase] = 0;
     }
+
+
+
   };
   // - Review the XY axis to ensure they are with the viewport min and max
-  reviewAxisThreshold = (xAxis, yAxis) => {
-    if (xAxis <= 0) {
-      xAxis = 0;
-    } else if (xAxis >= window.innerWidth) {
-      xAxis = window.innerWidth;
+  reviewAxisThreshold = (xPhase, yPhase) => {
+    if (this.axis[xPhase] <= 0) {
+      this.axis[xPhase] = 0;
+    } else if (this.axis[xPhase] >= window.innerWidth) {
+      this.axis[xPhase] = window.innerWidth;
     }
-    if (yAxis <= 0) {
-      yAxis = 0;
-    } else if (yAxis >= window.innerHeight) {
-      yAxis = window.innerHeight;
+    if (this.axis[yPhase] <= 0) {
+      this.axis[yPhase] = 0;
+    } else if (this.axis[yPhase] >= window.innerHeight) {
+      this.axis[yPhase] = window.innerHeight;
     }
   };
   // - Once a Drop Item is selected, update the class of the unselected Items and Landing Zone

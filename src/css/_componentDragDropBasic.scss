@@ -78,15 +78,18 @@
     &.inactive {
       background: rgb(200,255,255);
     }
+    @include hover {
+      background: darken(rgb(118,236,236), 15%);
+    }
   }
   &.magenta {
     background: rgb(236,118,236);
     &.inactive {
       background: rgb(255,200,255);
     }
-  }
-  &.noTransition {
-    transition: none;
+    @include hover {
+      background: darken(rgb(236,118,236), 15%);
+    }
   }
   &.pseudoHover {
     transform: translateY(-8px);
@@ -98,18 +101,12 @@
     }
   }
   &.yellow {
-    background: rgb(245, 212, 106);
+    background: rgb(245,212,106);
     &.inactive {
-      background: rgb(255, 236, 174);
+      background: rgb(255,236,174);
     }
-  }
-  @include hover {
-    transform: translateY(-8px);
-    &::before {
-      opacity: 0;
-    }
-    &::after {
-      opacity: 1;
+    @include hover {
+      background: darken(rgb(245,212,106), 15%);
     }
   }
 }
