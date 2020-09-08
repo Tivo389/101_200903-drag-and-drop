@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import DropItem from './DropItem';
+import DropItemBasic from './DropItemBasic';
 
 class DragDropBasic extends Component {
   // COMPONENT VARIALBES
@@ -26,9 +26,9 @@ class DragDropBasic extends Component {
       <div className="dragDropContainer">
         <div className="landingZone"></div>
         <div className="dropItemContainer">
-          <DropItem color="cyan" landingZoneArea={this.state.landingZoneArea}></DropItem>
-          <DropItem color="magenta" landingZoneArea={this.state.landingZoneArea}></DropItem>
-          <DropItem color="yellow" landingZoneArea={this.state.landingZoneArea}></DropItem>
+          <DropItemBasic color="cyan" landingZoneArea={this.state.landingZoneArea}></DropItemBasic>
+          <DropItemBasic color="magenta" landingZoneArea={this.state.landingZoneArea}></DropItemBasic>
+          <DropItemBasic color="yellow" landingZoneArea={this.state.landingZoneArea}></DropItemBasic>
         </div>
       </div>
     );

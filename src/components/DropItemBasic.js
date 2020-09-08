@@ -47,7 +47,7 @@ class DropItem extends Component {
   handleStart = (e) => {
     e.currentTarget.classList.add('pseudoHover');
     e.currentTarget.classList.add('noTransition');
-    document.body.classList.add('bodyScrollLock');
+    document.body.classList.add('bodyScrollLock'); // Scroll Bounce prevention in Safari
     this.updateOtherDropItems(e, 'Start');
     this.getAxis(e,'Start');
   };
