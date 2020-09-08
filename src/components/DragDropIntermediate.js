@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// import DropItemIntermediate from './DropItemIntermediate';
+import DropItemIntermediate from './DropItemIntermediate';
 
 class DrapDropIntermediate extends Component {
   // COMPONENT VARIALBES
@@ -8,12 +8,10 @@ class DrapDropIntermediate extends Component {
   };
 
 
-
   // LIFECYCLE METHODS
   componentDidMount() {
-    this.getLandingZoneArea();
     this.handleWindowHeight();
-    window.addEventListener('resize', this.handleWindowHeight);
+    this.handleDeliveryItemDisplay();
   }
   componentDidUpdate() {}
   componentWillUnmount() {}
@@ -25,54 +23,55 @@ class DrapDropIntermediate extends Component {
     return (
       <div className="dragDropContainerIntermediate">
         <div className="landingZoneContainer">
-          <div className="itemContainer" data-zone-type="alpha">
+          <div className="itemContainer" data-item-type="alpha" data-item-number="4">
             <div className="item"></div>
             <div className="item"></div>
             <div className="item"></div>
           </div>
-          <div className="itemContainer" data-zone-type="beta">
+          <div className="itemContainer" data-item-type="beta" data-item-number="3">
             <div className="item"></div>
             <div className="item"></div>
             <div className="item"></div>
           </div>
-          <div className="itemContainer" data-zone-type="charlie">
+          <div className="itemContainer" data-item-type="charlie" data-item-number="2">
             <div className="item"></div>
             <div className="item"></div>
             <div className="item"></div>
             <div className="item"></div>
           </div>
-          <div className="itemContainer" data-zone-type="delta">
+          <div className="itemContainer" data-item-type="delta" data-item-number="1">
+            <div className="item"></div>
             <div className="item"></div>
           </div>
         </div>
         <div className="deliveryItemContainer">
-          <div className="itemContainer" data-zone-type="delta">
-            <div className="item"></div>
-            <div className="item"></div>
-            <div className="item"></div>
-            <div className="item"></div>
-            <div className="item"></div>
+          <div className="itemContainer" data-item-type="delta" data-item-number="1">
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
           </div>
-          <div className="itemContainer" data-zone-type="charlie">
-            <div className="item"></div>
-            <div className="item"></div>
-            <div className="item"></div>
-            <div className="item"></div>
-            <div className="item"></div>
+          <div className="itemContainer" data-item-type="charlie" data-item-number="2">
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
           </div>
-          <div className="itemContainer" data-zone-type="beta">
-            <div className="item"></div>
-            <div className="item"></div>
-            <div className="item"></div>
-            <div className="item"></div>
-            <div className="item"></div>
+          <div className="itemContainer" data-item-type="beta" data-item-number="3">
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
           </div>
-          <div className="itemContainer" data-zone-type="alpha">
-            <div className="item"></div>
-            <div className="item"></div>
-            <div className="item"></div>
-            <div className="item"></div>
-            <div className="item"></div>
+          <div className="itemContainer" data-item-type="alpha" data-item-number="4">
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
+            <DropItemIntermediate landingZoneArea={this.state.landingZoneArea}/>
           </div>
         </div>
       </div>
@@ -82,20 +81,19 @@ class DrapDropIntermediate extends Component {
 
 
   // COMPONENT FUNCTIONS
-  // - Get coordinates for the Landing Zone and set State
-  getLandingZoneArea = () => {
-    const lzBoundary = document.querySelector('.landingZoneContainer').getBoundingClientRect();
-    const landingZoneArea = { ...this.state.landingZoneArea };
-    landingZoneArea['xOrigin'] = lzBoundary.x;
-    landingZoneArea['yOrigin'] = lzBoundary.y;
-    landingZoneArea['xEnd'] = lzBoundary.x + lzBoundary.width;
-    landingZoneArea['yEnd'] = lzBoundary.y + lzBoundary.height;
-    this.setState({
-      landingZoneArea: landingZoneArea
+  handleDeliveryItemDisplay = () => {
+    const deliveryItemContainer = document.querySelector('.deliveryItemContainer');
+    const itemContainer = deliveryItemContainer.querySelectorAll('.itemContainer');
+    itemContainer.forEach(container => {
+      const itemContainerOrder = parseInt(container.attributes['data-item-number'].value);
+      if (itemContainerOrder !== 1) {
+        container.classList.add('inactive');
+      }
     });
   };
   handleWindowHeight = () => {
     document.querySelector('.mainContainer').style = `height: ${window.innerHeight}px`;
+    window.addEventListener('resize', this.handleWindowHeight);
   };
 }
 
