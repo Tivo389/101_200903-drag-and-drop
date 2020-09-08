@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { throttle } from './Helper';
 
-class DropItem extends Component {
+class DropItemIntermediate extends Component {
   // COMPONENT VARIABLES
   axis = {xStart:0, yStart:0, xMove:0, yMove:0, xEnd:0, yEnd:0};
-  className = `dropItem ${this.props.color}`;
+  deliveryItemNumber;
+  dropItemTarget;
+  targetLandingZoneDOM;
   withinLandingZone = false;
   mouseDown = false;
-  dropItemTarget;
 
 
 
@@ -29,8 +30,8 @@ class DropItem extends Component {
   render() {
     return (
       <div
-      className={this.className}
-      onMouseDown={this.onMouseDown}
+      className="item"
+      // onMouseDown={this.onMouseDown}
       onTouchStart={this.onTouchStart}
       onTouchMove={throttle(this.onTouchMove, 8)}
       onTouchEnd={this.onTouchEnd}>
@@ -45,30 +46,30 @@ class DropItem extends Component {
 
   // HANDLER FUNCTION
   handleStart = (e) => {
-    e.currentTarget.classList.add('pseudoHover');
-    e.currentTarget.classList.add('noTransition');
     document.body.classList.add('bodyScrollLock'); // Scroll Bounce prevention in Safari
-    this.updateOtherDropItems(e, 'Start');
+    this.updateOtherElements(e, 'Start');
     this.getAxis(e,'Start');
+    this.defineLandingItems();
+    // console.log(this.targetLandingZoneDOM);
   };
   handleMove = (e) => {
     this.getAxis(e, 'Move');
     this.checkLandingZone(e);
-    this.updateOtherDropItems(e, 'Move');
-    this.applyAxis(e);
+    // this.updateOtherElements(e, 'Move');
+    // this.applyAxis(e);
   };
   handleEnd = (e) => {
-    if (this.dropItemTarget) {
-      this.dropItemTarget.classList.remove('pseudoHover');
-      this.dropItemTarget.classList.remove('noTransition');
-    } else {
-      e.currentTarget.classList.remove('pseudoHover');
-      e.currentTarget.classList.remove('noTransition');
-    }
     document.body.classList.remove('bodyScrollLock');
-    this.checkLandingZone(e);
-    this.updateOtherDropItems(e, 'End');
-    this.getAxis(e, 'End');
+    this.updateOtherElements(e, 'End');
+    // if (this.dropItemTarget) {
+    //   this.dropItemTarget.classList.remove('pseudoHover');
+    //   this.dropItemTarget.classList.remove('noTransition');
+    // } else {
+    //   e.currentTarget.classList.remove('pseudoHover');
+    //   e.currentTarget.classList.remove('noTransition');
+    // }
+    // this.checkLandingZone(e);
+    // this.getAxis(e, 'End');
   };
 
 
@@ -93,24 +94,24 @@ class DropItem extends Component {
 
 
   // MOUSE EVENT FUNCTIONS
-  onMouseDown = (e) => {
-    this.mouseDown = true;
-    this.dropItemTarget = e.currentTarget;
-    if (this.mouseDown) {
-      this.handleStart(e);
-      window.addEventListener('mousemove', this.onMouseMove);
-      window.addEventListener('mouseup', this.onMouseUp);
-    }
-  };
-  onMouseMove = (e) => {
-    throttle(this.handleMove(e), 8);
-  };
-  onMouseUp = (e) => {
-    this.mouseDown = false;
-    this.handleEnd(e);
-    window.removeEventListener('mousemove', this.onMouseMove);
-    window.removeEventListener('mouseup', this.onMouseUp);
-  };
+  // onMouseDown = (e) => {
+  //   this.mouseDown = true;
+  //   this.dropItemTarget = e.currentTarget;
+  //   if (this.mouseDown) {
+  //     this.handleStart(e);
+  //     window.addEventListener('mousemove', this.onMouseMove);
+  //     window.addEventListener('mouseup', this.onMouseUp);
+  //   }
+  // };
+  // onMouseMove = (e) => {
+  //   throttle(this.handleMove(e), 8);
+  // };
+  // onMouseUp = (e) => {
+  //   this.mouseDown = false;
+  //   this.handleEnd(e);
+  //   window.removeEventListener('mousemove', this.onMouseMove);
+  //   window.removeEventListener('mouseup', this.onMouseUp);
+  // };
 
 
 
@@ -132,7 +133,7 @@ class DropItem extends Component {
     }
   };
 
-  // - Check if the Drop Item is above the Landing Zone and update the component property
+  // - Check if the Drop Item is above a valid Landing Zone and update the component property
   checkLandingZone = (e) => {
     const lz = this.props.landingZoneArea;
     let dropItemBoundary;
@@ -156,7 +157,14 @@ class DropItem extends Component {
       }
       this.withinLandingZone = false;
     }
-    // console.log(`this.withinLandingZone: ${this.withinLandingZone}`);
+    console.log(`this.withinLandingZone: ${this.withinLandingZone}`);
+  };
+
+  // - Once the Drop Item is selected, determine the Coordinates for each Landing Item
+  defineLandingItems = () => {
+    const allLandingItems = this.targetLandingZoneDOM.querySelectorAll('.item');
+    console.log(allLandingItems);
+    // 999 CONTINUE HERE
   };
 
   // - Get the XY axis values based on the requested Phase
@@ -239,30 +247,34 @@ class DropItem extends Component {
   };
 
   // - Once a Drop Item is selected, update the class of the unselected Items and Landing Zone
-  updateOtherDropItems = (e, phase) => {
-    const allItems = document.querySelector('.dropItemContainer').querySelectorAll('.dropItem');
-    const landingZone = document.querySelector('.landingZone');
-    if (phase === 'Start') {
-      allItems.forEach(item => {
-        if (item !== e.currentTarget) item.classList.add('inactive');
-      });
-      landingZone.classList.add('active');
-    } else if (phase === 'Move') {
-      if (this.withinLandingZone) {
-        landingZone.classList.add('withinLandingZone');
-        landingZone.classList.remove('active');
-      } else {
-        landingZone.classList.remove('withinLandingZone');
-        landingZone.classList.add('active');
+  updateOtherElements = (e, phase) => {
+    const deliveryItemParent = e.currentTarget.parentElement;
+    const allDeliveryItems = deliveryItemParent.querySelectorAll('.item');
+    const landingZoneContainer = document.querySelector('.landingZoneContainer');
+    const allLandingZones = landingZoneContainer.querySelectorAll('.itemContainer');
+    this.deliveryItemNumber = parseInt(deliveryItemParent.attributes['data-item-number'].value);
+    allDeliveryItems.forEach(item => {
+      if (phase === 'Start' && item !== e.currentTarget) {
+        item.classList.add('inactive');
+      } else if (phase === 'End' && item !== e.currentTarget) {
+        item.classList.remove('inactive');
       }
-    } else if (phase === 'End') {
-      allItems.forEach(item => {
-        if (item !== e.currentTarget) item.classList.remove('inactive');
-      });
-      landingZone.classList.remove('active');
-      landingZone.classList.remove('withinLandingZone');
-    }
+    });
+    allLandingZones.forEach(landingZone => {
+      this.targetZoneNumber = parseInt(landingZone.attributes['data-item-number'].value)
+      const notSameNumber = this.targetZoneNumber !== this.deliveryItemNumber;
+      const sameNumber = this.targetZoneNumber === this.deliveryItemNumber;
+      if (phase === 'Start' && sameNumber) {
+        this.targetLandingZoneDOM = landingZone;
+      } else if (phase === 'End' && sameNumber) {
+        this.targetLandingZoneDOM = null;
+      } else  if (phase === 'Start' && notSameNumber) {
+        landingZone.classList.add('inactive');
+      } else if (phase === 'End' && notSameNumber) {
+        landingZone.classList.remove('inactive');
+      }
+    });
   };
 }
 
-export default DropItem;
+export default DropItemIntermediate;
