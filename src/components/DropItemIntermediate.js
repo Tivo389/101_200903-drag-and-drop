@@ -3,12 +3,14 @@ import { throttle } from './Helper';
 
 class DropItemIntermediate extends Component {
   // COMPONENT VARIABLES
-  axis = {xStart:0, yStart:0, xMove:0, yMove:0, xEnd:0, yEnd:0};
+  cursorAxis = {xStart:0, yStart:0, xMove:0, yMove:0, xEnd:0, yEnd:0};
   deliveryItemNumber;
   dropItemTarget;
-  targetLandingZoneDOM;
-  withinLandingZone = false;
+  landingPadCoordinates = [];
+  validLandingPadIndex;
   mouseDown = false;
+  targetLandingPadsDOM;
+  withinLandingZone = false;
 
 
 
@@ -30,7 +32,7 @@ class DropItemIntermediate extends Component {
   render() {
     return (
       <div
-      className="item"
+      className="deliveryItem"
       // onMouseDown={this.onMouseDown}
       onTouchStart={this.onTouchStart}
       onTouchMove={throttle(this.onTouchMove, 8)}
@@ -48,14 +50,13 @@ class DropItemIntermediate extends Component {
   handleStart = (e) => {
     document.body.classList.add('bodyScrollLock'); // Scroll Bounce prevention in Safari
     this.updateOtherElements(e, 'Start');
-    this.getAxis(e,'Start');
-    this.defineLandingItems();
-    // console.log(this.targetLandingZoneDOM);
+    this.getCursorAxis(e,'Start');
+    this.defineLandingPads();
   };
   handleMove = (e) => {
-    this.getAxis(e, 'Move');
-    this.checkLandingZone(e);
-    // this.updateOtherElements(e, 'Move');
+    this.getCursorAxis(e, 'Move');
+    this.checkLandingPad(e);
+    this.updateOtherElements(e, 'Move');
     // this.applyAxis(e);
   };
   handleEnd = (e) => {
@@ -68,8 +69,8 @@ class DropItemIntermediate extends Component {
     //   e.currentTarget.classList.remove('pseudoHover');
     //   e.currentTarget.classList.remove('noTransition');
     // }
-    // this.checkLandingZone(e);
-    // this.getAxis(e, 'End');
+    // this checkLandingPad(e);
+    // this.getCursorAxis(e, 'End');
   };
 
 
@@ -122,8 +123,8 @@ class DropItemIntermediate extends Component {
   // COMPONENT FUNCTIONS
   // - Apply XY axis values to the current Drop Item
   applyAxis = (e) => {
-    const xAxisMovement = this.axis.xMove - this.axis.xStart;
-    const yAxisMovement = this.axis.yMove - this.axis.yStart - 8; // -8px linked to .pseudoHover
+    const xAxisMovement = this.cursorAxis.xMove - this.cursorAxis.xStart;
+    const yAxisMovement = this.cursorAxis.yMove - this.cursorAxis.yStart;
     const styleValue = `transform: translate(${xAxisMovement}px, ${yAxisMovement}px);`
     // // console.log(`styleValue: ${styleValue}`);
     if (this.dropItemTarget) {
@@ -133,50 +134,43 @@ class DropItemIntermediate extends Component {
     }
   };
 
-  // - Check if the Drop Item is above a valid Landing Zone and update the component property
-  checkLandingZone = (e) => {
-    const lz = this.props.landingZoneArea;
-    let dropItemBoundary;
-    if (this.dropItemTarget) {
-      dropItemBoundary = this.dropItemTarget.getBoundingClientRect();
-    } else {
-      dropItemBoundary = e.currentTarget.getBoundingClientRect();
-    }
-    const dropItemCenterX = dropItemBoundary.x + (dropItemBoundary.width / 2);
-    const dropItemCenterY = dropItemBoundary.y + (dropItemBoundary.height / 2);
-    const withinLandingZoneX = dropItemCenterX >= lz.xOrigin && dropItemCenterX <= lz.xEnd;
-    const withinLandingZoneY = dropItemCenterY >= lz.yOrigin && dropItemCenterY <= lz.yEnd;
-    const withinLandingZone = withinLandingZoneX && withinLandingZoneY;
-    if (withinLandingZone) {
-      this.withinLandingZone = true;
-    } else {
-      if (this.dropItemTarget) {
-        this.dropItemTarget.style = "";
-      } else {
-        e.currentTarget.style = "";
-      }
-      this.withinLandingZone = false;
-    }
-    console.log(`this.withinLandingZone: ${this.withinLandingZone}`);
+  // - Check if the Drop Item is above a valid Landing Pad. If so, assign the Pad index.
+  checkLandingPad = (e) => {
+    this.landingPadCoordinates.forEach((landingPad, i) => {
+      const cursorAxisX = this.cursorAxis.xMove;
+      const cursorAxisY = this.cursorAxis.yMove;
+      const validAxisX = (cursorAxisX >= landingPad.xOrigin) && (cursorAxisX <= landingPad.xEnd);
+      const validAxisY = (cursorAxisY >= landingPad.yOrigin) && (cursorAxisY <= landingPad.yEnd);
+      const validLandingPad = validAxisX && validAxisY;
+      if (validLandingPad) this.validLandingPadIndex = i;
+    });
+    console.log(`this.validLandingPadIndex: ${this.validLandingPadIndex}`);
   };
 
-  // - Once the Drop Item is selected, determine the Coordinates for each Landing Item
-  defineLandingItems = () => {
-    const allLandingItems = this.targetLandingZoneDOM.querySelectorAll('.item');
-    console.log(allLandingItems);
-    // 999 CONTINUE HERE
+  // - Once the Drop Item is selected, define the Coordinates for each Landing Pad.
+  defineLandingPads = () => {
+    const allLandingPads = this.targetLandingPadsDOM.querySelectorAll('.landingPad');
+    allLandingPads.forEach((landingPad, i) => {
+      this.landingPadCoordinates[i] = {
+        xOrigin: landingPad.getBoundingClientRect().x,
+        yOrigin: landingPad.getBoundingClientRect().y,
+        xEnd: landingPad.getBoundingClientRect().x + landingPad.getBoundingClientRect().width,
+        yEnd: landingPad.getBoundingClientRect().y + landingPad.getBoundingClientRect().height
+      };
+    });
+    // console.log(this.landingPadCoordinates);
   };
 
   // - Get the XY axis values based on the requested Phase
-  getAxis = (e,phase) => {
+  getCursorAxis = (e,phase) => {
     let eClientX;
     let eClientY;
     let eTargetTouchesClientX;
     let eTargetTouchesClientY;
     let xPhase = `x${phase}`;
     let yPhase = `y${phase}`;
-    const initialMovement = this.axis.xEnd === 0;
-    const subsequentMovement = this.axis.xEnd !== 0;
+    const initialMovement = this.cursorAxis.xEnd === 0;
+    const subsequentMovement = this.cursorAxis.xEnd !== 0;
     // - Define variables
     if (phase === 'Start' || (phase === 'Move' && initialMovement)) {
       if (e.touches && e.touches.length > 1) {
@@ -198,15 +192,15 @@ class DropItemIntermediate extends Component {
         return;
       } else if (window.PointerEvent) {
         if (e.targetTouches) {
-          eTargetTouchesClientX = this.axis.xEnd + Math.round(e.targetTouches[0].clientX);
-          eTargetTouchesClientY = this.axis.yEnd + Math.round(e.targetTouches[0].clientY);
+          eTargetTouchesClientX = this.cursorAxis.xEnd + Math.round(e.targetTouches[0].clientX);
+          eTargetTouchesClientY = this.cursorAxis.yEnd + Math.round(e.targetTouches[0].clientY);
         } else {
-          eClientX = this.axis.xEnd + Math.round(e.clientX);
-          eClientY = this.axis.yEnd + Math.round(e.clientY);
+          eClientX = this.cursorAxis.xEnd + Math.round(e.clientX);
+          eClientY = this.cursorAxis.yEnd + Math.round(e.clientY);
         }
       } else {
-        eClientX = this.axis.xEnd + Math.round(e.clientX);
-        eClientY = this.axis.yEnd + Math.round(e.clientY);
+        eClientX = this.cursorAxis.xEnd + Math.round(e.clientX);
+        eClientY = this.cursorAxis.yEnd + Math.round(e.clientY);
       }
     }
     // - Value Checker For Debugging
@@ -220,15 +214,15 @@ class DropItemIntermediate extends Component {
         return;
       } else if (window.PointerEvent) {
         if (e.targetTouches) {
-          this.axis[xPhase] = eTargetTouchesClientX;
-          this.axis[yPhase] = eTargetTouchesClientY;
+          this.cursorAxis[xPhase] = eTargetTouchesClientX;
+          this.cursorAxis[yPhase] = eTargetTouchesClientY;
         } else {
-          this.axis[xPhase] = eClientX;
-          this.axis[yPhase] = eClientY;
+          this.cursorAxis[xPhase] = eClientX;
+          this.cursorAxis[yPhase] = eClientY;
         }
       } else {
-        this.axis[xPhase] = eClientX;
-        this.axis[yPhase] = eClientY;
+        this.cursorAxis[xPhase] = eClientX;
+        this.cursorAxis[yPhase] = eClientY;
       }
     } else if (phase === 'End' && this.withinLandingZone === true) {
       let regexMatch;
@@ -238,20 +232,20 @@ class DropItemIntermediate extends Component {
       } else {
         regexMatch = e.currentTarget.style.transform.match(regexPattern);
       }
-      this.axis[xPhase] = parseFloat(regexMatch[0]);
-      this.axis[yPhase] = parseFloat(regexMatch[1]);
+      this.cursorAxis[xPhase] = parseFloat(regexMatch[0]);
+      this.cursorAxis[yPhase] = parseFloat(regexMatch[1]);
     } else if (phase === 'End' && this.withinLandingZone === false) {
-      this.axis[xPhase] = 0;
-      this.axis[yPhase] = 0;
+      this.cursorAxis[xPhase] = 0;
+      this.cursorAxis[yPhase] = 0;
     }
   };
 
   // - Once a Drop Item is selected, update the class of the unselected Items and Landing Zone
   updateOtherElements = (e, phase) => {
     const deliveryItemParent = e.currentTarget.parentElement;
-    const allDeliveryItems = deliveryItemParent.querySelectorAll('.item');
+    const allDeliveryItems = deliveryItemParent.querySelectorAll('.deliveryItem');
     const landingZoneContainer = document.querySelector('.landingZoneContainer');
-    const allLandingZones = landingZoneContainer.querySelectorAll('.itemContainer');
+    const allLandingZones = landingZoneContainer.querySelectorAll('.landingPads');
     this.deliveryItemNumber = parseInt(deliveryItemParent.attributes['data-item-number'].value);
     allDeliveryItems.forEach(item => {
       if (phase === 'Start' && item !== e.currentTarget) {
@@ -265,15 +259,16 @@ class DropItemIntermediate extends Component {
       const notSameNumber = this.targetZoneNumber !== this.deliveryItemNumber;
       const sameNumber = this.targetZoneNumber === this.deliveryItemNumber;
       if (phase === 'Start' && sameNumber) {
-        this.targetLandingZoneDOM = landingZone;
+        this.targetLandingPadsDOM = landingZone;
       } else if (phase === 'End' && sameNumber) {
-        this.targetLandingZoneDOM = null;
+        this.targetLandingPadsDOM = null;
       } else  if (phase === 'Start' && notSameNumber) {
         landingZone.classList.add('inactive');
       } else if (phase === 'End' && notSameNumber) {
         landingZone.classList.remove('inactive');
       }
     });
+    // 999 Continue here. deactivate the landing pad you are NOT hovering over.
   };
 }
 

@@ -10,7 +10,7 @@
   width: 100%;
   padding: 0 16px;
 }
-.landingZoneContainer .itemContainer {
+.landingZoneContainer .landingPads {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -26,31 +26,31 @@
   &.inactive {
     opacity: 0.25;
   }
-  &[data-item-type='alpha'] .item {
+  &[data-item-type='alpha'] .landingPad {
     background-image: url('../images/circle.svg');
   }
-  &[data-item-type='beta'] .item {
+  &[data-item-type='beta'] .landingPad {
     background-image: url('../images/triangle.svg');
   }
-  &[data-item-type='charlie'] .item {
+  &[data-item-type='charlie'] .landingPad {
     background-image: url('../images/square.svg');
   }
-  &[data-item-type='delta'] .item {
+  &[data-item-type='delta'] .landingPad {
     background-image: url('../images/hexagon.svg');
   }
 }
-.landingZoneContainer .item {
+.landingZoneContainer .landingPad {
   width: 55px;
   height: 55px;
   background-size: cover;
-  & + .item {
+  & + .landingPad {
     margin-left: 16px;
   }
 }
 
 
 
-.dragDropContainerIntermediate .deliveryItemContainer {
+.dragDropContainerIntermediate .deliveryZoneContainer {
   border-top: 1px dashed rgb(100,100,100);
   width: 100%;
   overflow: auto;
@@ -67,7 +67,7 @@
     width: 24px;
   }
 }
-.deliveryItemContainer .itemContainer {
+.deliveryZoneContainer .deliveryItems {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -82,27 +82,27 @@
   &.inactive {
     display: none;
   }
-  & + .itemContainer {
+  & + .deliveryItems {
     margin-left: 24px;
   }
-  &[data-item-type='alpha'] .item {
+  &[data-item-type='alpha'] .deliveryItem {
     background-image: url('../images/circle.svg');
   }
-  &[data-item-type='beta'] .item {
+  &[data-item-type='beta'] .deliveryItem {
     background-image: url('../images/triangle.svg');
     margin-left: 10px;
   }
-  &[data-item-type='charlie'] .item {
+  &[data-item-type='charlie'] .deliveryItem {
     background-image: url('../images/square.svg');
   }
-  &[data-item-type='delta'] .item {
+  &[data-item-type='delta'] .deliveryItem {
     background-image: url('../images/hexagon.svg');
-    & + .item {
+    & + .deliveryItem {
       margin-left: 10px;
     }
   }
 }
-.deliveryItemContainer .item {
+.deliveryZoneContainer .deliveryItem {
   width: 77px;
   height: 77px;
   background-size: cover;
@@ -110,7 +110,7 @@
   &.inactive {
     opacity: 0.25;
   }
-  & + .item {
+  & + .deliveryItem {
     margin-left: 4px;
   }
 }
