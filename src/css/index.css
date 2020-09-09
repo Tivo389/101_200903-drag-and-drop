@@ -522,36 +522,36 @@ h6 {
   width: 100%;
   padding: 0 16px; }
 
-.landingZoneContainer .itemContainer {
+.landingZoneContainer .landingPads {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   transition: 0.15s ease-in-out;
   padding: 8px 0; }
-  .landingZoneContainer .itemContainer:first-of-type {
+  .landingZoneContainer .landingPads:first-of-type {
     padding-top: 0; }
-  .landingZoneContainer .itemContainer:last-of-type {
+  .landingZoneContainer .landingPads:last-of-type {
     padding-bottom: 0; }
-  .landingZoneContainer .itemContainer.inactive {
+  .landingZoneContainer .landingPads.inactive {
     opacity: 0.25; }
-  .landingZoneContainer .itemContainer[data-item-type='alpha'] .item {
+  .landingZoneContainer .landingPads[data-item-type='alpha'] .landingPad {
     background-image: url("../images/circle.svg"); }
-  .landingZoneContainer .itemContainer[data-item-type='beta'] .item {
+  .landingZoneContainer .landingPads[data-item-type='beta'] .landingPad {
     background-image: url("../images/triangle.svg"); }
-  .landingZoneContainer .itemContainer[data-item-type='charlie'] .item {
+  .landingZoneContainer .landingPads[data-item-type='charlie'] .landingPad {
     background-image: url("../images/square.svg"); }
-  .landingZoneContainer .itemContainer[data-item-type='delta'] .item {
+  .landingZoneContainer .landingPads[data-item-type='delta'] .landingPad {
     background-image: url("../images/hexagon.svg"); }
 
-.landingZoneContainer .item {
+.landingZoneContainer .landingPad {
   width: 55px;
   height: 55px;
   background-size: cover; }
-  .landingZoneContainer .item + .item {
+  .landingZoneContainer .landingPad + .landingPad {
     margin-left: 16px; }
 
-.dragDropContainerIntermediate .deliveryItemContainer {
+.dragDropContainerIntermediate .deliveryZoneContainer {
   border-top: 1px dashed #646464;
   width: 100%;
   overflow: auto;
@@ -560,13 +560,13 @@ h6 {
   flex-direction: row;
   padding: 24px 0 8px 0;
   justify-content: flex-start; }
-  .dragDropContainerIntermediate .deliveryItemContainer::after {
+  .dragDropContainerIntermediate .deliveryZoneContainer::after {
     display: block;
     content: '';
     flex: 1 0 auto;
     width: 24px; }
 
-.deliveryItemContainer .itemContainer {
+.deliveryZoneContainer .deliveryItems {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -575,32 +575,32 @@ h6 {
   padding: 6px 8px;
   border-radius: 8px;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.24); }
-  .deliveryItemContainer .itemContainer:first-of-type {
+  .deliveryZoneContainer .deliveryItems:first-of-type {
     margin-left: 24px; }
-  .deliveryItemContainer .itemContainer.inactive {
+  .deliveryZoneContainer .deliveryItems.inactive {
     display: none; }
-  .deliveryItemContainer .itemContainer + .itemContainer {
+  .deliveryZoneContainer .deliveryItems + .deliveryItems {
     margin-left: 24px; }
-  .deliveryItemContainer .itemContainer[data-item-type='alpha'] .item {
+  .deliveryZoneContainer .deliveryItems[data-item-type='alpha'] .deliveryItem {
     background-image: url("../images/circle.svg"); }
-  .deliveryItemContainer .itemContainer[data-item-type='beta'] .item {
+  .deliveryZoneContainer .deliveryItems[data-item-type='beta'] .deliveryItem {
     background-image: url("../images/triangle.svg");
     margin-left: 10px; }
-  .deliveryItemContainer .itemContainer[data-item-type='charlie'] .item {
+  .deliveryZoneContainer .deliveryItems[data-item-type='charlie'] .deliveryItem {
     background-image: url("../images/square.svg"); }
-  .deliveryItemContainer .itemContainer[data-item-type='delta'] .item {
+  .deliveryZoneContainer .deliveryItems[data-item-type='delta'] .deliveryItem {
     background-image: url("../images/hexagon.svg"); }
-    .deliveryItemContainer .itemContainer[data-item-type='delta'] .item + .item {
+    .deliveryZoneContainer .deliveryItems[data-item-type='delta'] .deliveryItem + .deliveryItem {
       margin-left: 10px; }
 
-.deliveryItemContainer .item {
+.deliveryZoneContainer .deliveryItem {
   width: 77px;
   height: 77px;
   background-size: cover;
   transition: 0.15s ease-in-out; }
-  .deliveryItemContainer .item.inactive {
+  .deliveryZoneContainer .deliveryItem.inactive {
     opacity: 0.25; }
-  .deliveryItemContainer .item + .item {
+  .deliveryZoneContainer .deliveryItem + .deliveryItem {
     margin-left: 4px; }
 
 .bodyScrollLock {
