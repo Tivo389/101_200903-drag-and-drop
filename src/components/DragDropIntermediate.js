@@ -21,23 +21,23 @@ class DrapDropIntermediate extends Component {
     return (
       <div className="dragDropContainerIntermediate">
         <div className="landingZoneContainer">
-          <div className="landingPads" data-item-type="alpha" data-item-number="4">
+          <div className="landingZone" data-item-type="alpha" data-item-number="4">
             <div className="landingPad"></div>
             <div className="landingPad"></div>
             <div className="landingPad"></div>
           </div>
-          <div className="landingPads" data-item-type="beta" data-item-number="3">
+          <div className="landingZone" data-item-type="beta" data-item-number="3">
             <div className="landingPad"></div>
             <div className="landingPad"></div>
             <div className="landingPad"></div>
           </div>
-          <div className="landingPads" data-item-type="charlie" data-item-number="2">
+          <div className="landingZone" data-item-type="charlie" data-item-number="2">
             <div className="landingPad"></div>
             <div className="landingPad"></div>
             <div className="landingPad"></div>
             <div className="landingPad"></div>
           </div>
-          <div className="landingPads" data-item-type="delta" data-item-number="1">
+          <div className="landingZone" data-item-type="delta" data-item-number="1">
             <div className="landingPad"></div>
             <div className="landingPad"></div>
           </div>
