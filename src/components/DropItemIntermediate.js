@@ -6,10 +6,10 @@ class DropItemIntermediate extends Component {
   cursorAxis = {xStart:0, yStart:0, xMove:0, yMove:0, xEnd:0, yEnd:0};
   deliveryItemNumber;
   dropItemTarget;
-  landingPadCoordinates = [];
-  validLandingPadIndex;
   mouseDown = false;
   targetLandingPadsDOM;
+  validLandingPads = [];
+  validLandingPadIndex;
   withinLandingZone = false;
 
 
@@ -55,7 +55,7 @@ class DropItemIntermediate extends Component {
   };
   handleMove = (e) => {
     this.getCursorAxis(e, 'Move');
-    this.checkLandingPad(e);
+    this.getLandingPadCoordinates(e);
     this.updateOtherElements(e, 'Move');
     // this.applyAxis(e);
   };
@@ -69,7 +69,7 @@ class DropItemIntermediate extends Component {
     //   e.currentTarget.classList.remove('pseudoHover');
     //   e.currentTarget.classList.remove('noTransition');
     // }
-    // this checkLandingPad(e);
+    // this getLandingPadCoordinates(e);
     // this.getCursorAxis(e, 'End');
   };
 
@@ -135,30 +135,36 @@ class DropItemIntermediate extends Component {
   };
 
   // - Check if the Drop Item is above a valid Landing Pad. If so, assign the Pad index.
-  checkLandingPad = (e) => {
-    this.landingPadCoordinates.forEach((landingPad, i) => {
+  getLandingPadCoordinates = (e) => {
+    this.validLandingPads.forEach((landingPad, i) => {
       const cursorAxisX = this.cursorAxis.xMove;
       const cursorAxisY = this.cursorAxis.yMove;
       const validAxisX = (cursorAxisX >= landingPad.xOrigin) && (cursorAxisX <= landingPad.xEnd);
       const validAxisY = (cursorAxisY >= landingPad.yOrigin) && (cursorAxisY <= landingPad.yEnd);
       const validLandingPad = validAxisX && validAxisY;
-      if (validLandingPad) this.validLandingPadIndex = i;
+      if (validLandingPad) {
+        this.validLandingPadIndex = i;
+        this.validLandingPads[i].activeLandingPad = true;
+      } else {
+        this.validLandingPads[i].activeLandingPad = false;
+      };
     });
-    console.log(`this.validLandingPadIndex: ${this.validLandingPadIndex}`);
+    // console.log(`this.validLandingPadIndex: ${this.validLandingPadIndex}`);
+    // this.validLandingPads.forEach(landingPad => console.log(landingPad.activeLandingPad));
   };
 
   // - Once the Drop Item is selected, define the Coordinates for each Landing Pad.
   defineLandingPads = () => {
     const allLandingPads = this.targetLandingPadsDOM.querySelectorAll('.landingPad');
     allLandingPads.forEach((landingPad, i) => {
-      this.landingPadCoordinates[i] = {
+      this.validLandingPads[i] = {
         xOrigin: landingPad.getBoundingClientRect().x,
         yOrigin: landingPad.getBoundingClientRect().y,
         xEnd: landingPad.getBoundingClientRect().x + landingPad.getBoundingClientRect().width,
         yEnd: landingPad.getBoundingClientRect().y + landingPad.getBoundingClientRect().height
       };
     });
-    // console.log(this.landingPadCoordinates);
+    // console.log(this.validLandingPads);
   };
 
   // - Get the XY axis values based on the requested Phase
@@ -245,7 +251,10 @@ class DropItemIntermediate extends Component {
     const deliveryItemParent = e.currentTarget.parentElement;
     const allDeliveryItems = deliveryItemParent.querySelectorAll('.deliveryItem');
     const landingZoneContainer = document.querySelector('.landingZoneContainer');
-    const allLandingZones = landingZoneContainer.querySelectorAll('.landingPads');
+    const allLandingPadsDOM = landingZoneContainer.querySelectorAll('.landingZone');
+    const allTargetLandingPads = this.targetLandingPadsDOM;
+
+    // - Add active/inactive class to the delivery items
     this.deliveryItemNumber = parseInt(deliveryItemParent.attributes['data-item-number'].value);
     allDeliveryItems.forEach(item => {
       if (phase === 'Start' && item !== e.currentTarget) {
@@ -254,21 +263,35 @@ class DropItemIntermediate extends Component {
         item.classList.remove('inactive');
       }
     });
-    allLandingZones.forEach(landingZone => {
+
+    // - Add active/inactive class to the Landing Zones
+    allLandingPadsDOM.forEach(landingZone => {
       this.targetZoneNumber = parseInt(landingZone.attributes['data-item-number'].value)
       const notSameNumber = this.targetZoneNumber !== this.deliveryItemNumber;
       const sameNumber = this.targetZoneNumber === this.deliveryItemNumber;
       if (phase === 'Start' && sameNumber) {
         this.targetLandingPadsDOM = landingZone;
-      } else if (phase === 'End' && sameNumber) {
-        this.targetLandingPadsDOM = null;
       } else  if (phase === 'Start' && notSameNumber) {
         landingZone.classList.add('inactive');
+      } else if (phase === 'End' && sameNumber) {
+        this.targetLandingPadsDOM = null;
       } else if (phase === 'End' && notSameNumber) {
         landingZone.classList.remove('inactive');
       }
     });
-    // 999 Continue here. deactivate the landing pad you are NOT hovering over.
+
+    // - Add active/inactive class to Landing Pad
+    if ((phase === 'Move') && (this.validLandingPadIndex !== undefined)) {
+      allTargetLandingPads.childNodes.forEach((landingPad, i) => {
+        if (i === this.validLandingPadIndex) {
+          landingPad.classList.remove('inactive');
+        } else {
+          landingPad.classList.add('inactive');
+        }
+      });
+    }
+    // 999 CONTINUE HERE / If both landing pads are false, remove inactive from all
+    // this.validLandingPads.forEach(landingPad => console.log(landingPad.activeLandingPad));
   };
 }
 

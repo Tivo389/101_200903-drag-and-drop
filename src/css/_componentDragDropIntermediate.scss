@@ -10,7 +10,7 @@
   width: 100%;
   padding: 0 16px;
 }
-.landingZoneContainer .landingPads {
+.landingZoneContainer .landingZone {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -43,6 +43,10 @@
   width: 55px;
   height: 55px;
   background-size: cover;
+  transition: $durationXS ease-in-out;
+  &.inactive {
+    opacity: 0.25;
+  }
   & + .landingPad {
     margin-left: 16px;
   }
