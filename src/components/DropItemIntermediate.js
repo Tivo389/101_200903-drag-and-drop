@@ -281,17 +281,22 @@ class DropItemIntermediate extends Component {
     });
 
     // - Add active/inactive class to Landing Pad
-    if ((phase === 'Move') && (this.validLandingPadIndex !== undefined)) {
-      allTargetLandingPads.childNodes.forEach((landingPad, i) => {
-        if (i === this.validLandingPadIndex) {
+    if (phase === 'Move') {
+      const padStatus = [];
+      this.validLandingPads.forEach(landingPad => padStatus.push(landingPad.activeLandingPad));
+      const activePadPresent = padStatus.includes(true);
+      if (activePadPresent) {
+        // console.log('There is an active pad');
+        allTargetLandingPads.childNodes.forEach((landingPad, i) => {
+          if (i !== this.validLandingPadIndex) landingPad.classList.add('inactive');
+        });
+      } else if (!activePadPresent) {
+        // console.log('There are no active pads');
+        allTargetLandingPads.childNodes.forEach((landingPad) => {
           landingPad.classList.remove('inactive');
-        } else {
-          landingPad.classList.add('inactive');
-        }
-      });
-    }
-    // 999 CONTINUE HERE / If both landing pads are false, remove inactive from all
-    // this.validLandingPads.forEach(landingPad => console.log(landingPad.activeLandingPad));
+        });
+      }
+    };
   };
 }
 
