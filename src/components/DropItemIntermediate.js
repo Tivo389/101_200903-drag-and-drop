@@ -57,6 +57,7 @@ class DropItemIntermediate extends Component {
     this.getCursorAxis(e, 'Move');
     this.getLandingPadCoordinates(e);
     this.updateOtherElements(e, 'Move');
+    // 999 Continue here, apply the coordinates to the valid drop item
     // this.applyAxis(e);
   };
   handleEnd = (e) => {
